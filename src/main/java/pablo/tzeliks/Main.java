@@ -139,12 +139,11 @@ public class Main {
 
             String opcao = InputHelper.lerString(sc, "Deseja parar de Adicionar Materiáis? Se sim Digite 0. Caso queira continuar, digite qualquer outro carácter.");
             if (opcao.equalsIgnoreCase("0")) {
-                return;
+                break;
             }
         }
 
         // Criação do Objeto
-
         notaEntradaDAO.salvar(new NotaEntrada(0, fornecedorEscolhido), estoqueMaterial);
     }
 }
