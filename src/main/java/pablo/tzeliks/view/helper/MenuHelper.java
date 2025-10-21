@@ -34,4 +34,11 @@ public class MenuHelper {
 
         MessageHelper.subtitulo("Menu Cadastro Material");
     }
+
+    public static void menuRegistroNotaEntrada() {
+
+        espacador();
+
+        MessageHelper.subtitulo("Menu Registro de Nota de Entrada");
+    }
 }

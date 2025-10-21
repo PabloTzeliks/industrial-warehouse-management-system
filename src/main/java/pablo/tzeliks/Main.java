@@ -2,19 +2,23 @@ package pablo.tzeliks;
 
 import pablo.tzeliks.dao.FornecedorDAO;
 import pablo.tzeliks.dao.MaterialDAO;
+import pablo.tzeliks.dao.NotaEntradaDAO;
 import pablo.tzeliks.model.Fornecedor;
 import pablo.tzeliks.model.Material;
+import pablo.tzeliks.model.NotaEntrada;
 import pablo.tzeliks.view.helper.InputHelper;
 import pablo.tzeliks.view.helper.MenuHelper;
 import pablo.tzeliks.view.helper.MessageHelper;
+import pablo.tzeliks.view.helper.PrintHelper;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
 
         FornecedorDAO fornecedorDAO = new FornecedorDAO();
         MaterialDAO materialDAO = new MaterialDAO();
+        NotaEntradaDAO notaEntradaDAO = new NotaEntradaDAO();
 
         Scanner sc = new Scanner(System.in);
 
@@ -36,7 +40,7 @@ public class Main {
                     cadastrarMaterial(sc, materialDAO);
                     break;
                 case "3":
-                    registrarNotaEntrada(sc, notaEntradaDAO);
+                    registrarNotaEntrada(sc, notaEntradaDAO, fornecedorDAO);
                     break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
@@ -74,5 +78,73 @@ public class Main {
         Material material = new Material(0, nomeMaterial, unidadeMedida, quantidadeInicial);
 
         materialDAO.salvar(material);
+    }
+
+    public static void registrarNotaEntrada(Scanner sc, NotaEntradaDAO notaEntradaDAO, FornecedorDAO fornecedorDAO, MaterialDAO materialDAO) {
+
+        MenuHelper.menuRegistroNotaEntrada();
+
+        // Listagem de Fornecedores
+        MessageHelper.subtitulo("Escolha de Fornecedor");
+
+        List<Fornecedor> fornecedores = fornecedorDAO.listarFornecedores();
+        PrintHelper.listarFornecedores(fornecedores);
+
+        // Escolha do Fornecedor
+        int fornecedorId = InputHelper.lerInt(sc, "Digite o id do fornecedor");
+        Optional<Fornecedor> fornecedorOptional = fornecedorDAO.buscarFornecedorPorId(fornecedorId);
+
+        Fornecedor fornecedorEscolhido;
+
+        if (fornecedorOptional.isPresent()) {
+
+            fornecedorEscolhido = fornecedorOptional.get();
+
+            MessageHelper.sucesso("Fornecedor adicionado com sucesso!");
+        } else {
+
+            MessageHelper.erro("Fornecedor com ID: " + fornecedorId + ", não foi encontrado. Tente novamente.");
+            return;
+        }
+
+        // Escolha dos Materiáis
+
+        HashMap<Integer, Double> estoqueMaterial = new HashMap<>();
+
+        while (true) {
+            // Listagem de Materiáis
+            MessageHelper.subtitulo("Escolha de Materiáis");
+
+            List<Material> materiais = materialDAO.listarMateriais();
+            PrintHelper.listarMateriais(materiais);
+
+            // Escolha do Material
+            int materialId = InputHelper.lerInt(sc, "Digite o id do material");
+            Optional<Material> materialOptional = materialDAO.buscarMaterialPorId(materialId);
+
+            Material materialEscolhido;
+
+            if (materialOptional.isPresent()) {
+
+                materialEscolhido = materialOptional.get();
+
+                estoqueMaterial.put(materialEscolhido.getId(), materialEscolhido.getEstoque()); // Insere o Material e o estoque do mesmo
+
+                MessageHelper.sucesso("Material adicionado com sucesso!");
+            } else {
+
+                MessageHelper.erro("Material com ID: " + materialId + ", não foi encontrado. Tente novamente.");
+                continue;
+            }
+
+            String opcao = InputHelper.lerString(sc, "Deseja parar de Adicionar Materiáis? Se sim Digite 0. Caso queira continuar, digite qualquer outro carácter.");
+            if (opcao.equalsIgnoreCase("0")) {
+                return;
+            }
+        }
+
+        // Criação do Objeto
+
+        notaEntradaDAO.salvar(new NotaEntrada(0, fornecedorEscolhido), estoqueMaterial);
     }
 }

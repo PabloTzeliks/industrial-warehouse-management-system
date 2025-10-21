@@ -45,4 +45,12 @@ public class Material {
     public void setEstoque(double estoque) {
         this.estoque = estoque;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                "Nome: " + nome +
+                "Unidade: " + unidade +
+                "Estoque: " + estoque;
+    }
 }
