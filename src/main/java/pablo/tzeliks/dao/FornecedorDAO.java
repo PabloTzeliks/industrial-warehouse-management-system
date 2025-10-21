@@ -3,31 +3,56 @@ package pablo.tzeliks.dao;
 import pablo.tzeliks.dao.conexao.Conexao;
 import pablo.tzeliks.dao.exception.DatabaseException;
 import pablo.tzeliks.model.Fornecedor;
+import pablo.tzeliks.view.helper.MessageHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class FornecedorDAO {
 
     public void salvar(Fornecedor fornecedor) {
 
-        String sql = """
-                INSERT INTO Fornecedor (id, nome, cnpj) VALUES (?, ?, ?); 
+        String sqlInsereFornecedor = """
+                INSERT INTO Fornecedor (nome, cnpj) VALUES (?, ?); 
                 """;
 
-        try (Connection conn = Conexao.getConexao();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sqlValidaCnpj = """
+                SELECT COUNT(*) cnpj FROM Fornecedor WHERE cnpj = ?;
+                """;
 
-            stmt.setInt(1, fornecedor.getId());
-            stmt.setString(2, fornecedor.getNome());
-            stmt.setString(3, fornecedor.getCnpj());
+        try (Connection conn = Conexao.getConexao()) {
 
-            stmt.executeUpdate();
+            try (PreparedStatement stmt = conn.prepareStatement(sqlValidaCnpj)) {
+
+                stmt.setString(1, fornecedor.getCnpj());
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+
+                    if (count > 0) {
+
+                        throw new SQLException("Fornecedor ja esta em uso, CNPJ já cadastrado.");
+                    }
+                }
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereFornecedor)) {
+
+                stmt.setString(1, fornecedor.getNome());
+                stmt.setString(2, fornecedor.getCnpj());
+
+                stmt.executeUpdate();
+
+                MessageHelper.sucesso("Fornecedor cadastrado com sucesso!");
+            }
 
         } catch (SQLException e) {
 
-            throw new DatabaseException("Erro ao inserir Fornecedor, observe: " + e.getMessage());
+            MessageHelper.erro("Erro ao inserir Fornecedor, observe: " + e.getMessage());
         }
     }
 

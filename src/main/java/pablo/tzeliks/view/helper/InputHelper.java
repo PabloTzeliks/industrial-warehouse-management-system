@@ -11,8 +11,26 @@ public class InputHelper {
         while (true) {
             String input = sc.nextLine();
 
-            if (validaInput(input)) {
-                System.out.println("Input inválido, tente novamente.");
+            if (validaInputNulo(input)) {
+                MessageHelper.erro("Input inválido, tente novamente.");
+                continue;
+            }
+
+            return input;
+        }
+    }
+
+    public static String lerCnpj(Scanner sc, String prompt) {
+
+        System.out.println(prompt + ": ");
+
+        while (true) {
+            String input = sc.nextLine();
+
+            if (validaCnpj(input)) {
+                MessageHelper.erro("CNPJ inválido, tente novamente.");
+
+                System.out.println("\nCertifique-se que possua exatamente 14 carácteres numéricos");
                 continue;
             }
 
@@ -22,8 +40,21 @@ public class InputHelper {
 
     // Validadores
 
-    private static boolean validaInput(String mensagem) {
+    private static boolean validaInputNulo(String mensagem) {
 
-        return !mensagem.isBlank();
+        return mensagem.isBlank();
+    }
+
+    private static boolean validaCnpj(String cnpj) {
+
+        if (!validaInputNulo(cnpj)) {
+            return false;
+        }
+
+        if (cnpj.length() != 14) {
+            return false;
+        }
+
+        return true;
     }
 }
