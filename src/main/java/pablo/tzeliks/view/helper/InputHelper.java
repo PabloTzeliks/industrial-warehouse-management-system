@@ -20,6 +20,22 @@ public class InputHelper {
         }
     }
 
+    public static int lerInt(Scanner sc, String prompt) {
+
+        System.out.println(prompt + ": ");
+
+        while (true) {
+            String input = sc.next();
+
+            if (validaInputNulo(input)) {
+                MessageHelper.erro("Input inválido, tente novamente.");
+                continue;
+            }
+
+            return Integer.parseInt(input);
+        }
+    }
+
     public static String lerCnpj(Scanner sc, String prompt) {
 
         System.out.println(prompt + ": ");

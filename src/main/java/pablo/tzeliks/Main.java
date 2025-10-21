@@ -2,6 +2,7 @@ package pablo.tzeliks;
 
 import pablo.tzeliks.dao.FornecedorDAO;
 import pablo.tzeliks.model.Fornecedor;
+import pablo.tzeliks.model.Material;
 import pablo.tzeliks.view.helper.InputHelper;
 import pablo.tzeliks.view.helper.MenuHelper;
 import pablo.tzeliks.view.helper.MessageHelper;
@@ -50,5 +51,17 @@ public class Main {
         fornecedorDAO.salvar(fornecedor);
     }
 
+    public static void cadastrarMaterial(Scanner sc, MaterialDAO materialDAO) {
+
+        MenuHelper.menuCadastroMaterial();
+
+        String nomeMaterial = InputHelper.lerString(sc, "Digite o nome do material");
+        String unidadeMedida = InputHelper.lerString(sc, "Digite o unidade do material");
+        int quantidadeInicial = InputHelper.lerInt(sc, "Digite a quantidade inicial de estoque");
+
+        Material material = new Material(0, nomeMaterial, unidadeMedida, quantidadeInicial);
+
+        materialDAO.salvar(material);
+    }
 
 }

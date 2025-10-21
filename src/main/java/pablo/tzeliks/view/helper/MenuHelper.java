@@ -26,4 +26,11 @@ public class MenuHelper {
 
         MessageHelper.subtitulo("Menu Cadastro Fornecedor");
     }
+
+    public static void menuCadastroMaterial() {
+
+        espacador();
+
+        MessageHelper.subtitulo("Menu Cadastro Material");
+    }
 }
