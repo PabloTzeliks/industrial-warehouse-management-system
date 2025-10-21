@@ -57,7 +57,7 @@ public class NotaEntradaDAO {
 
                 if (linhas == 0) {
 
-                    throw new SQLException("Nenhum Máterial insérido para adicionar a Nota de Entrada");
+                    throw new SQLException("Ocorreu um erro para inserir os Materiáis da Nota de Entrada");
                 }
             }
 
@@ -69,7 +69,12 @@ public class NotaEntradaDAO {
                     stmt.setInt(2, estoque.getKey());
                     stmt.setDouble(3, estoque.getValue());
 
-                    stmt.executeUpdate();
+                    int linhas = stmt.executeUpdate();
+
+                    if (linhas == 0) {
+
+                        throw new SQLException("Ocorreu um erro para atualizar o estoque dos Materiáis da Nota de Entrada");
+                    }
                 }
             }
 
