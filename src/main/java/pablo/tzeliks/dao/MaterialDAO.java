@@ -9,6 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class MaterialDAO {
 
@@ -55,5 +58,59 @@ public class MaterialDAO {
 
             MessageHelper.erro("Erro ao inserir Material, observe: " + e.getMessage());
         }
+    }
+
+    public List<Material> listarMateriais() {
+
+        List<Material> materiais = new ArrayList<>();
+
+        String sql = """
+                SELECT id, nome, unidade, estoque FROM Material;
+                """;
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                Material novoMaterial = new Material(rs.getInt("id"), rs.getString("nome"), rs.getString("unidade"),  rs.getDouble("estoque"));
+
+                materiais.add(novoMaterial);
+            }
+
+        } catch (SQLException e) {
+
+            MessageHelper.erro("Erro ao listar Materiáis, observe: " + e.getMessage());
+        }
+
+        return materiais;
+    }
+
+    public Optional<Material> buscarMaterialPorId(int id) {
+
+        String sql = """
+                SELECT id, nome, unidade, estoque FROM Material WHERE id = ?;
+                """;
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if  (rs.next()) {
+
+                return Optional.of(new Material(rs.getInt("id"), rs.getString("nome"), rs.getString("unidade"), rs.getDouble("estoque")));
+            }
+
+        } catch (SQLException e) {
+
+            MessageHelper.erro("Erro ao buscar Material por ID, observe: " + e.getMessage());
+        }
+
+        return Optional.empty();
     }
 }

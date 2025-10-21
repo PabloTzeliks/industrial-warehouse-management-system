@@ -35,6 +35,9 @@ public class Main {
                 case "2":
                     cadastrarMaterial(sc, materialDAO);
                     break;
+                case "3":
+                    registrarNotaEntrada(sc, notaEntradaDAO);
+                    break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
                     break;
