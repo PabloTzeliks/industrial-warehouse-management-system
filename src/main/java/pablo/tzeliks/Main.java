@@ -1,6 +1,7 @@
 package pablo.tzeliks;
 
 import pablo.tzeliks.dao.FornecedorDAO;
+import pablo.tzeliks.dao.MaterialDAO;
 import pablo.tzeliks.model.Fornecedor;
 import pablo.tzeliks.model.Material;
 import pablo.tzeliks.view.helper.InputHelper;
@@ -13,6 +14,7 @@ public class Main {
     public static void main(String[] args) {
 
         FornecedorDAO fornecedorDAO = new FornecedorDAO();
+        MaterialDAO materialDAO = new MaterialDAO();
 
         Scanner sc = new Scanner(System.in);
 
@@ -32,6 +34,7 @@ public class Main {
                     break;
                 case "2":
                     cadastrarMaterial(sc, materialDAO);
+                    break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
                     break;
@@ -57,11 +60,16 @@ public class Main {
 
         String nomeMaterial = InputHelper.lerString(sc, "Digite o nome do material");
         String unidadeMedida = InputHelper.lerString(sc, "Digite o unidade do material");
-        int quantidadeInicial = InputHelper.lerInt(sc, "Digite a quantidade inicial de estoque");
+        double quantidadeInicial = InputHelper.lerDouble(sc, "Digite a quantidade inicial de estoque");
+
+        if (quantidadeInicial <= 0) {
+
+            MessageHelper.erro("Quantidade inserida não pode ser negativa. Tente novamente.");
+            return;
+        }
 
         Material material = new Material(0, nomeMaterial, unidadeMedida, quantidadeInicial);
 
         materialDAO.salvar(material);
     }
-
 }

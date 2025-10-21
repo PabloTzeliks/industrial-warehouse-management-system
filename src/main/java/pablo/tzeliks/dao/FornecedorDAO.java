@@ -1,7 +1,6 @@
 package pablo.tzeliks.dao;
 
 import pablo.tzeliks.dao.conexao.Conexao;
-import pablo.tzeliks.dao.exception.DatabaseException;
 import pablo.tzeliks.model.Fornecedor;
 import pablo.tzeliks.view.helper.MessageHelper;
 

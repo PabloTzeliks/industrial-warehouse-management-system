@@ -16,6 +16,7 @@ public class MenuHelper {
         MessageHelper.subtitulo("Menu Principal");
 
         System.out.println("\n1- Cadastrar Fornecedor");
+        System.out.println("2- Cadastrar Material");
 
         System.out.println("\n0- Sair do sistema");
     }

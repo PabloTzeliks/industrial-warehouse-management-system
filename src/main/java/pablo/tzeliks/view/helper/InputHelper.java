@@ -5,10 +5,8 @@ import java.util.Scanner;
 public class InputHelper {
 
     public static String lerString(Scanner sc, String prompt) {
-
-        System.out.println(prompt + ": ");
-
         while (true) {
+            System.out.println(prompt + ": ");
             String input = sc.nextLine();
 
             if (validaInputNulo(input)) {
@@ -21,11 +19,9 @@ public class InputHelper {
     }
 
     public static int lerInt(Scanner sc, String prompt) {
-
-        System.out.println(prompt + ": ");
-
         while (true) {
-            String input = sc.next();
+            System.out.println(prompt + ": ");
+            String input = sc.nextLine();
 
             if (validaInputNulo(input)) {
                 MessageHelper.erro("Input inválido, tente novamente.");
@@ -36,11 +32,23 @@ public class InputHelper {
         }
     }
 
-    public static String lerCnpj(Scanner sc, String prompt) {
-
-        System.out.println(prompt + ": ");
-
+    public static double lerDouble(Scanner sc, String prompt) {
         while (true) {
+            System.out.println(prompt + ": ");
+            String input = sc.nextLine();
+
+            if (validaInputNulo(input)) {
+                MessageHelper.erro("Input inválido, tente novamente.");
+                continue;
+            }
+
+            return Double.parseDouble(input);
+        }
+    }
+
+    public static String lerCnpj(Scanner sc, String prompt) {
+        while (true) {
+            System.out.println(prompt + ": ");
             String input = sc.nextLine();
 
             if (validaCnpj(input)) {
@@ -58,7 +66,7 @@ public class InputHelper {
 
     private static boolean validaInputNulo(String mensagem) {
 
-        return mensagem.isBlank();
+        return mensagem.isEmpty();
     }
 
     private static boolean validaCnpj(String cnpj) {
