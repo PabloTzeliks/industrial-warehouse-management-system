@@ -17,6 +17,7 @@ public class MenuHelper {
 
         System.out.println("\n1- Cadastrar Fornecedor");
         System.out.println("2- Cadastrar Material");
+        System.out.println("3- Registrar Nota de Entrada");
 
         System.out.println("\n0- Sair do sistema");
     }

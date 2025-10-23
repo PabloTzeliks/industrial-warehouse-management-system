@@ -41,7 +41,7 @@ public class NotaEntrada {
     @Override
     public String toString() {
         return "ID: " + id +
-                "Fornecedor: " + fornecedor +
-                "Data Entrada:" + dataEntrada;
+                "\nFornecedor: " + fornecedor +
+                "\nData Entrada:" + dataEntrada;
     }
 }

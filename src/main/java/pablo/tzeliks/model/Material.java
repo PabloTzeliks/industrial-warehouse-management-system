@@ -49,8 +49,8 @@ public class Material {
     @Override
     public String toString() {
         return "ID: " + id +
-                "Nome: " + nome +
-                "Unidade: " + unidade +
-                "Estoque: " + estoque;
+                "\nNome: " + nome +
+                "\nUnidade: " + unidade +
+                "\nEstoque: " + estoque;
     }
 }

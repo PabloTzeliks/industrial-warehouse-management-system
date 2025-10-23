@@ -40,7 +40,7 @@ public class Main {
                     cadastrarMaterial(sc, materialDAO);
                     break;
                 case "3":
-                    registrarNotaEntrada(sc, notaEntradaDAO, fornecedorDAO);
+                    registrarNotaEntrada(sc, notaEntradaDAO, fornecedorDAO, materialDAO);
                     break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
@@ -86,6 +86,7 @@ public class Main {
 
         // Listagem de Fornecedores
         MessageHelper.subtitulo("Escolha de Fornecedor");
+        System.out.println();
 
         List<Fornecedor> fornecedores = fornecedorDAO.listarFornecedores();
         PrintHelper.listarFornecedores(fornecedores);
@@ -127,6 +128,8 @@ public class Main {
             if (materialOptional.isPresent()) {
 
                 materialEscolhido = materialOptional.get();
+
+                materiais.remove(materialEscolhido); // Retira o Material da lista escolhida
 
                 estoqueMaterial.put(materialEscolhido.getId(), materialEscolhido.getEstoque()); // Insere o Material e o estoque do mesmo
 

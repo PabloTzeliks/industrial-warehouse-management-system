@@ -39,7 +39,7 @@ public class Fornecedor {
     @Override
     public String toString() {
         return "ID: " + id +
-                "Nome: " + nome +
-                "CNPJ: " + cnpj;
+                "\nNome: " + nome +
+                "\nCNPJ: " + cnpj;
     }
 }
