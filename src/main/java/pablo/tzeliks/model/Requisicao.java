@@ -18,6 +18,13 @@ public class Requisicao {
         this.status = status;
     }
 
+    public Requisicao(int id, String setor, LocalDate dataSolicitacao, StatusRequisicao status) {
+        this.id = id;
+        this.setor = setor;
+        this.dataSolicitacao = dataSolicitacao;
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }

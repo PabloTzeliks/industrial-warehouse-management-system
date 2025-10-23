@@ -220,4 +220,10 @@ public class Main {
         // Executa a inserção
         requisicaoDAO.salvar(requisicao, estoqueMaterial);
     }
+
+    public static void atenderRequisicao() {
+
+        MenuHelper.atendeRequisicao();
+
+    }
 }

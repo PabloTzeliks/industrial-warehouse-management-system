@@ -1,11 +1,16 @@
 package pablo.tzeliks.dao;
 
 import pablo.tzeliks.dao.conexao.Conexao;
+import pablo.tzeliks.model.Material;
 import pablo.tzeliks.model.Requisicao;
+import pablo.tzeliks.model.enums.StatusRequisicao;
 import pablo.tzeliks.view.helper.MessageHelper;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RequisicaoDAO {
 
@@ -61,8 +66,39 @@ public class RequisicaoDAO {
         } catch (SQLException e) {
 
             MessageHelper.erro("Erro ao inserir a Requisição, observe: " + e.getMessage());
-
-            e.printStackTrace();
         }
+    }
+
+    public List<Requisicao> listarRequisicao() {
+
+        List<Requisicao> requisicoes = new ArrayList<>();
+
+        String sql = """
+                SELECT id, setor, dataSolicitacao, status FROM Requisicao WHERE status = ?;
+                """;
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, StatusRequisicao.PENDENTE.name());
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                LocalDate dataSolicitacao = LocalDate.parse(rs.getString("dataSolicitacao"));
+                StatusRequisicao status = StatusRequisicao.valueOf(rs.getString("status"));
+
+                Requisicao novaRequisicao = new Requisicao(rs.getInt("id"), rs.getString("setor"), dataSolicitacao,  status);
+
+                requisicoes.add(novaRequisicao);
+            }
+
+        } catch (SQLException e) {
+
+            MessageHelper.erro("Erro ao listar Requisições, observe: " + e.getMessage());
+        }
+
+        return requisicoes;
     }
 }

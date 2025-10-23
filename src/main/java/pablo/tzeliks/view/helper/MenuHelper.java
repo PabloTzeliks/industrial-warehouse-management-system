@@ -50,4 +50,11 @@ public class MenuHelper {
 
         MessageHelper.subtitulo("Menu Registro de Requisição");
     }
+
+    public static void menuAtendeRequisicao() {
+
+        espacador();
+
+        MessageHelper.subtitulo("Atender Requisição");
+    }
 }
