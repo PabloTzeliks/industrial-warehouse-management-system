@@ -35,7 +35,12 @@ public class RequisicaoDAO {
 
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
 
-                    requisicaoId = rs.getInt(1);
+                    if (rs.next()) {
+
+                        requisicaoId = rs.getInt(1);
+                    } else {
+                        throw new SQLException("ID da Requisição não retornado.");
+                    }
                 }
             }
 
@@ -56,6 +61,8 @@ public class RequisicaoDAO {
         } catch (SQLException e) {
 
             MessageHelper.erro("Erro ao inserir a Requisição, observe: " + e.getMessage());
+
+            e.printStackTrace();
         }
     }
 }

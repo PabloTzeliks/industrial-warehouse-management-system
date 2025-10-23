@@ -7,6 +7,8 @@ import pablo.tzeliks.dao.RequisicaoDAO;
 import pablo.tzeliks.model.Fornecedor;
 import pablo.tzeliks.model.Material;
 import pablo.tzeliks.model.NotaEntrada;
+import pablo.tzeliks.model.Requisicao;
+import pablo.tzeliks.model.enums.StatusRequisicao;
 import pablo.tzeliks.view.helper.InputHelper;
 import pablo.tzeliks.view.helper.MenuHelper;
 import pablo.tzeliks.view.helper.MessageHelper;
@@ -212,5 +214,10 @@ public class Main {
                 break;
             }
         }
+
+        Requisicao requisicao = new Requisicao(0, setorRequisicao, StatusRequisicao.PENDENTE);
+
+        // Executa a inserção
+        requisicaoDAO.salvar(requisicao, estoqueMaterial);
     }
 }

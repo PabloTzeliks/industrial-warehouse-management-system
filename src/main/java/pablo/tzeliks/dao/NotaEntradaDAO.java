@@ -91,8 +91,6 @@ public class NotaEntradaDAO {
         } catch (SQLException e) {
 
             MessageHelper.erro("Erro ao inserir Nota Entrada, observe: " + e.getMessage());
-
-            e.printStackTrace();
         }
     }
 }
