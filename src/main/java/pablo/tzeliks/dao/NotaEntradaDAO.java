@@ -25,9 +25,11 @@ public class NotaEntradaDAO {
                 UPDATE Material SET estoque = estoque - ? WHERE id = ? AND estoque >= ?;
                 """;
 
+        int idNotaEntrada = 0;
+
         try (Connection conn = Conexao.getConexao()) {
 
-            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereNotaEntrada)) {
+            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereNotaEntrada, Statement.RETURN_GENERATED_KEYS)) {
 
                 Date dataEntrada = Date.valueOf(notaEntrada.getDataEntrada());
 
@@ -40,24 +42,32 @@ public class NotaEntradaDAO {
 
                     throw new SQLException("Nenhum Máterial insérido para adicionar a Nota de Entrada");
                 }
+
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+
+                    if (rs.next()) {
+
+                        idNotaEntrada = rs.getInt(1);
+                    } else {
+                        throw new SQLException("ID da Nota de Entrada não foi retornado.");
+                    }
+                }
             }
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlInsereNotaEntradaItem)) {
 
                 for (Map.Entry<Integer, Double> estoque : estoquePecas.entrySet()) {
 
-                    stmt.setInt(1, notaEntrada.getId());
+                    stmt.setInt(1, idNotaEntrada);
                     stmt.setInt(2, estoque.getKey());
                     stmt.setDouble(3, estoque.getValue());
 
-                    stmt.executeUpdate();
-                }
+                    int linhas = stmt.executeUpdate();
 
-                int linhas = stmt.executeUpdate();
+                    if (linhas == 0) {
 
-                if (linhas == 0) {
-
-                    throw new SQLException("Ocorreu um erro para inserir os Materiáis da Nota de Entrada");
+                        throw new SQLException("Ocorreu um erro para inserir os Materiáis da Nota de Entrada");
+                    }
                 }
             }
 
@@ -83,6 +93,8 @@ public class NotaEntradaDAO {
         } catch (SQLException e) {
 
             MessageHelper.erro("Erro ao inserir Nota Entrada, observe: " + e.getMessage());
+
+            e.printStackTrace();
         }
     }
 }

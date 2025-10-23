@@ -3,6 +3,7 @@ package pablo.tzeliks;
 import pablo.tzeliks.dao.FornecedorDAO;
 import pablo.tzeliks.dao.MaterialDAO;
 import pablo.tzeliks.dao.NotaEntradaDAO;
+import pablo.tzeliks.dao.RequisicaoDAO;
 import pablo.tzeliks.model.Fornecedor;
 import pablo.tzeliks.model.Material;
 import pablo.tzeliks.model.NotaEntrada;
@@ -19,6 +20,7 @@ public class Main {
         FornecedorDAO fornecedorDAO = new FornecedorDAO();
         MaterialDAO materialDAO = new MaterialDAO();
         NotaEntradaDAO notaEntradaDAO = new NotaEntradaDAO();
+        RequisicaoDAO requisicaoDAO = new RequisicaoDAO();
 
         Scanner sc = new Scanner(System.in);
 
@@ -41,6 +43,9 @@ public class Main {
                     break;
                 case "3":
                     registrarNotaEntrada(sc, notaEntradaDAO, fornecedorDAO, materialDAO);
+                    break;
+                case "4":
+                    registrarRequisicao(sc, requisicaoDAO);
                     break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
@@ -123,6 +128,8 @@ public class Main {
             int materialId = InputHelper.lerInt(sc, "Digite o id do material");
             Optional<Material> materialOptional = materialDAO.buscarMaterialPorId(materialId);
 
+            double quantidadeMaterial = InputHelper.lerDouble(sc, "Digite a quantidade do material");
+
             Material materialEscolhido;
 
             if (materialOptional.isPresent()) {
@@ -131,7 +138,7 @@ public class Main {
 
                 materiais.remove(materialEscolhido); // Retira o Material da lista escolhida
 
-                estoqueMaterial.put(materialEscolhido.getId(), materialEscolhido.getEstoque()); // Insere o Material e o estoque do mesmo
+                estoqueMaterial.put(materialEscolhido.getId(), quantidadeMaterial); // Insere o Material e o estoque do mesmo
 
                 MessageHelper.sucesso("Material adicionado com sucesso!");
             } else {
@@ -140,7 +147,9 @@ public class Main {
                 continue;
             }
 
-            String opcao = InputHelper.lerString(sc, "Deseja parar de Adicionar Materiáis? Se sim Digite 0. Caso queira continuar, digite qualquer outro carácter.");
+            String opcao = InputHelper.lerString(sc, "\nDigite 0 para sair." +
+                    "\nDigite qualquer outro caráctere para continuar.\n" +
+                    "\nEscolha");
             if (opcao.equalsIgnoreCase("0")) {
                 break;
             }
@@ -148,5 +157,62 @@ public class Main {
 
         // Criação do Objeto
         notaEntradaDAO.salvar(new NotaEntrada(0, fornecedorEscolhido), estoqueMaterial);
+    }
+
+    public static void registrarRequisicao(Scanner sc, RequisicaoDAO requisicaoDAO, MaterialDAO materialDAO) {
+
+        MenuHelper.menuRegistrarRequisicao();
+
+        MessageHelper.subtitulo("Escolha do Setor");
+        String setorRequisicao = InputHelper.lerString(sc, "Digite o setor do requisição");
+
+        HashMap<Integer, Double> estoqueMaterial = new HashMap<>();
+
+        while (true) {
+            // Listagem de Materiáis
+            MessageHelper.subtitulo("Escolha de Materiáis");
+
+            List<Material> materiais = materialDAO.listarMateriais();
+            PrintHelper.listarMateriais(materiais);
+
+            // Escolha do Material
+            int materialId = InputHelper.lerInt(sc, "Digite o id do material");
+            Optional<Material> materialOptional = materialDAO.buscarMaterialPorId(materialId);
+
+            double quantidadeMaterial = InputHelper.lerDouble(sc, "Digite a quantidade do material");
+
+            Material materialEscolhido;
+
+            if (materialOptional.isPresent()) {
+
+                materialEscolhido = materialOptional.get();
+
+                materiais.remove(materialEscolhido); // Retira o Material da lista escolhida
+
+                // Valida se quantidade inserida pelo usuário é válida
+                if (quantidadeMaterial <= 0 || quantidadeMaterial > materialEscolhido.getEstoque()) {
+
+                    MessageHelper.erro("Valor inválido de Material inserido.");
+                    continue;
+                }
+
+                estoqueMaterial.put(materialEscolhido.getId(), quantidadeMaterial); // Insere o Material e o estoque do mesmo
+
+                MessageHelper.sucesso("Material adicionado com sucesso!");
+            } else {
+
+                MessageHelper.erro("Material com ID: " + materialId + ", não foi encontrado. Tente novamente.");
+                continue;
+            }
+
+            String opcao = InputHelper.lerString(sc, "\nDigite 0 para sair." +
+                    "\nDigite qualquer outro caráctere para continuar.\n" +
+                    "\nEscolha");
+            if (opcao.equalsIgnoreCase("0")) {
+                break;
+            }
+        }
+
+
     }
 }
