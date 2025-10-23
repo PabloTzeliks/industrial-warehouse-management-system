@@ -1,7 +1,6 @@
 package pablo.tzeliks.dao;
 
 import pablo.tzeliks.dao.conexao.Conexao;
-import pablo.tzeliks.model.Fornecedor;
 import pablo.tzeliks.model.NotaEntrada;
 import pablo.tzeliks.view.helper.MessageHelper;
 
@@ -22,7 +21,7 @@ public class NotaEntradaDAO {
                 """;
 
         String sqlUpdateMaterial = """
-                UPDATE Material SET estoque = estoque - ? WHERE id = ? AND estoque >= ?;
+                UPDATE Material SET estoque = estoque + ? WHERE id = ?;
                 """;
 
         int idNotaEntrada = 0;
@@ -77,7 +76,6 @@ public class NotaEntradaDAO {
 
                     stmt.setDouble(1, estoque.getValue());
                     stmt.setInt(2, estoque.getKey());
-                    stmt.setDouble(3, estoque.getValue());
 
                     int linhas = stmt.executeUpdate();
 

@@ -1,18 +1,17 @@
 package pablo.tzeliks.dao;
 
 import pablo.tzeliks.dao.conexao.Conexao;
-import pablo.tzeliks.model.Material;
 import pablo.tzeliks.model.Requisicao;
 import pablo.tzeliks.view.helper.MessageHelper;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.HashMap;
 
 public class RequisicaoDAO {
 
-    public void salvar(Requisicao requisicao) {
+    public void salvar(Requisicao requisicao, HashMap<Integer, Double> dicionarioEstoque) {
+
+        int requisicaoId = 0;
 
         String sqlInsereRequisicao = """
                 INSERT INTO Requisicao (setor, dataSolicitacao, status) VALUES (?, ?, ?); 
@@ -24,36 +23,39 @@ public class RequisicaoDAO {
 
         try (Connection conn = Conexao.getConexao()) {
 
-            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereRequisicao)) {
+            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereRequisicao, Statement.RETURN_GENERATED_KEYS)) {
 
-                stmt.setString(1, material.getNome());
+                Date dataSolicitacao = Date.valueOf(requisicao.getDataSolicitacao());
 
-                ResultSet rs = stmt.executeQuery();
+                stmt.setString(1, requisicao.getSetor());
+                stmt.setDate(2, dataSolicitacao);
+                stmt.setString(3, requisicao.getSetor());
 
-                if (rs.next()) {
-                    int count = rs.getInt(1);
+                stmt.executeUpdate();
 
-                    if (count > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
 
-                        throw new SQLException("Material ja esta em uso, nome já cadastrado.");
-                    }
+                    requisicaoId = rs.getInt(1);
                 }
             }
 
-            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereFornecedor)) {
+            try (PreparedStatement stmt = conn.prepareStatement(sqlInsereAssociativaRequisicao)) {
 
-                stmt.setString(1, material.getNome());
-                stmt.setString(2, material.getUnidade());
-                stmt.setDouble(3, material.getEstoque());
+                for (Integer i : dicionarioEstoque.keySet()) {
 
-                stmt.executeUpdate();
+                    stmt.setInt(1, requisicaoId);
+                    stmt.setInt(2, i);
+                    stmt.setDouble(3, dicionarioEstoque.get(i));
+
+                    stmt.executeUpdate();
+                }
 
                 MessageHelper.sucesso("Material cadastrado com sucesso!");
             }
 
         } catch (SQLException e) {
 
-            MessageHelper.erro("Erro ao inserir Material, observe: " + e.getMessage());
+            MessageHelper.erro("Erro ao inserir a Requisição, observe: " + e.getMessage());
         }
     }
 }

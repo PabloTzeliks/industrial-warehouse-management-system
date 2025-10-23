@@ -45,7 +45,7 @@ public class Main {
                     registrarNotaEntrada(sc, notaEntradaDAO, fornecedorDAO, materialDAO);
                     break;
                 case "4":
-                    registrarRequisicao(sc, requisicaoDAO);
+                    registrarRequisicao(sc, requisicaoDAO, materialDAO);
                     break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
@@ -212,7 +212,5 @@ public class Main {
                 break;
             }
         }
-
-
     }
 }
