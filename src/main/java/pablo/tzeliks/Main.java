@@ -49,6 +49,9 @@ public class Main {
                 case "4":
                     registrarRequisicao(sc, requisicaoDAO, materialDAO);
                     break;
+                case "5":
+                    atenderRequisicao(sc, requisicaoDAO);
+                    break;
                 default:
                     MessageHelper.erro("Valor inválido. Tente novamente.");
                     break;
@@ -227,6 +230,13 @@ public class Main {
 
         // Listagem de Requisições Pendentes
         List<Requisicao> requisicoes = requisicaoDAO.listarRequisicao(StatusRequisicao.PENDENTE);
+
+        if (requisicoes.isEmpty()) {
+
+            MessageHelper.erro("Nenhuma requisicao foi encontrada.");
+            return;
+        }
+
         PrintHelper.listarRequisicao(requisicoes);
 
         // Seleção de Requisição

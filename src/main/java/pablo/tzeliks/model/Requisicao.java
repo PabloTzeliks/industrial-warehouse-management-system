@@ -60,8 +60,8 @@ public class Requisicao {
     @Override
     public String toString() {
         return "ID: " + id +
-                "Setor: " + setor +
-                "Data Solicitação: " + dataSolicitacao +
-                "Status: " + status;
+                "\nSetor: " + setor +
+                "\nData Solicitação: " + dataSolicitacao +
+                "\nStatus: " + status;
     }
 }

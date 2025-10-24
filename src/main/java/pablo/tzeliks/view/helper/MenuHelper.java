@@ -19,6 +19,7 @@ public class MenuHelper {
         System.out.println("2- Cadastrar Material");
         System.out.println("3- Registrar Nota de Entrada");
         System.out.println("4- Criar Requisição de Material");
+        System.out.println("5- Executa Requisição");
 
         System.out.println("\n0- Sair do sistema");
     }

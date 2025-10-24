@@ -33,7 +33,7 @@ public class RequisicaoDAO {
 
                 stmt.setString(1, requisicao.getSetor());
                 stmt.setDate(2, dataSolicitacao);
-                stmt.setString(3, requisicao.getSetor());
+                stmt.setString(3, requisicao.getStatus().name());
 
                 stmt.executeUpdate();
 
@@ -173,9 +173,35 @@ public class RequisicaoDAO {
                 }
             }
 
+            try {
+
+                alterarStatusRequisicao(requisicao, StatusRequisicao.ATENDIDA);
+            }
+
+            MessageHelper.sucesso("Requisição Atendida com sucesso!");
+
         } catch (SQLException e) {
 
             MessageHelper.erro("Erro ao Executar uma Requisição, observe: " + e.getMessage());
+        }
+    }
+
+    public void alterarStatusRequisicao(Requisicao requisicao, StatusRequisicao statusRequisicao) {
+
+        String sql = """
+                INSERT INTO Requisicao (status) VALUES (?);
+                """;
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, statusRequisicao.name());
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+
+            MessageHelper.erro("Erro ao mudar Status de Requisição, observe: " + e.getMessage());
         }
     }
 }
