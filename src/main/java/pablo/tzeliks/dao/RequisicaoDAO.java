@@ -142,6 +142,10 @@ public class RequisicaoDAO {
                 UPDATE Material SET estoque = estoque - ? WHERE id = ? AND estoque >= ?;
                 """;
 
+        String sqlUpdateStatusRequisicao = """
+                UPDATE Requisicao SET status = ? WHERE id = ?;
+                """;
+
         try (Connection conn = Conexao.getConexao()) {
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlBuscaItensRequisicao)) {
@@ -173,9 +177,17 @@ public class RequisicaoDAO {
                 }
             }
 
-            try {
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUpdateStatusRequisicao)) {
 
-                alterarStatusRequisicao(requisicao, StatusRequisicao.ATENDIDA);
+                stmt.setString(1, requisicao.getStatus().name());
+                stmt.setInt(2, requisicao.getId());
+
+                int linhasAfetadas = stmt.executeUpdate();
+
+                if (linhasAfetadas == 0) {
+
+                    throw new SQLException("Erro ao alterar o Status da Requisição.");
+                }
             }
 
             MessageHelper.sucesso("Requisição Atendida com sucesso!");
@@ -183,25 +195,8 @@ public class RequisicaoDAO {
         } catch (SQLException e) {
 
             MessageHelper.erro("Erro ao Executar uma Requisição, observe: " + e.getMessage());
-        }
-    }
 
-    public void alterarStatusRequisicao(Requisicao requisicao, StatusRequisicao statusRequisicao) {
-
-        String sql = """
-                INSERT INTO Requisicao (status) VALUES (?);
-                """;
-
-        try (Connection conn = Conexao.getConexao();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, statusRequisicao.name());
-
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-
-            MessageHelper.erro("Erro ao mudar Status de Requisição, observe: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
