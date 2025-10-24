@@ -49,10 +49,7 @@ public class Material {
     @Override
     public String toString() {
         return String.format(
-                        "ID: " + id +
-                        "\nNome: " + nome +
-                        "\nUnidade: " + unidade +
-                        "\nEstoque: " + estoque;
-        )
+                "ID: %d" + "\nNome: %s" + "\nUnidade %s" + "\nEstoque: %.2f", id, nome, unidade, estoque
+        );
     }
 }
