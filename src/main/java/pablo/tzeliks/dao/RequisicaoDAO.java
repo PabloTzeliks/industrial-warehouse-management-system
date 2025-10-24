@@ -172,14 +172,14 @@ public class RequisicaoDAO {
 
                     if (linhasAfetadas == 0) {
 
-                        throw new SQLException("Erro ao mudar as quantidades dos Materiais, nenhum material encontrado.");
+                        throw new SQLException("Erro ao mudar as quantidades dos Materiais.");
                     }
                 }
             }
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlUpdateStatusRequisicao)) {
 
-                stmt.setString(1, requisicao.getStatus().name());
+                stmt.setString(1, StatusRequisicao.ATENDIDA.name());
                 stmt.setInt(2, requisicao.getId());
 
                 int linhasAfetadas = stmt.executeUpdate();

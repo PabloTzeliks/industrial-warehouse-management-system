@@ -51,7 +51,7 @@ public class InputHelper {
             System.out.println(prompt + ": ");
             String input = sc.nextLine();
 
-            if (validaCnpj(input)) {
+            if (!validaCnpj(input)) {
                 MessageHelper.erro("CNPJ inválido, tente novamente.");
 
                 System.out.println("\nCertifique-se que possua exatamente 14 carácteres numéricos");
@@ -71,14 +71,10 @@ public class InputHelper {
 
     private static boolean validaCnpj(String cnpj) {
 
-        if (!validaInputNulo(cnpj)) {
+        if (cnpj == null) {
             return false;
         }
 
-        if (cnpj.length() != 14) {
-            return false;
-        }
-
-        return true;
+        return cnpj.matches("\\d{14}");
     }
 }

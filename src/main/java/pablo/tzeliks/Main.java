@@ -17,6 +17,10 @@ import pablo.tzeliks.view.helper.PrintHelper;
 import java.util.*;
 
 public class Main {
+
+    //arruma esse código
+    //ass: igor
+
     public static void main(String[] args) {
 
         FornecedorDAO fornecedorDAO = new FornecedorDAO();
@@ -171,26 +175,37 @@ public class Main {
         MessageHelper.subtitulo("Escolha do Setor");
         String setorRequisicao = InputHelper.lerString(sc, "Digite o setor do requisição");
 
+        List<Material> materiais = materialDAO.listarMateriais();
+
         HashMap<Integer, Double> estoqueMaterial = new HashMap<>();
 
         while (true) {
             // Listagem de Materiáis
             MessageHelper.subtitulo("Escolha de Materiáis");
 
-            List<Material> materiais = materialDAO.listarMateriais();
+            if (materiais.isEmpty()) {
+
+                MessageHelper.erro("Não há materiais para selecionar.");
+                break;
+            }
+
             PrintHelper.listarMateriais(materiais);
 
             // Escolha do Material
             int materialId = InputHelper.lerInt(sc, "Digite o id do material");
-            Optional<Material> materialOptional = materialDAO.buscarMaterialPorId(materialId);
+            Material materialEscolhido = null;
+
+            for (Material material : materiais) {
+
+                if (material.getId() ==  materialId) {
+                    materialEscolhido = material;
+                    break;
+                }
+            }
 
             double quantidadeMaterial = InputHelper.lerDouble(sc, "Digite a quantidade do material");
 
-            Material materialEscolhido;
-
-            if (materialOptional.isPresent()) {
-
-                materialEscolhido = materialOptional.get();
+            if (materialEscolhido != null) {
 
                 materiais.remove(materialEscolhido); // Retira o Material da lista escolhida
 

@@ -48,9 +48,11 @@ public class Material {
 
     @Override
     public String toString() {
-        return "ID: " + id +
-                "\nNome: " + nome +
-                "\nUnidade: " + unidade +
-                "\nEstoque: " + estoque;
+        return String.format(
+                        "ID: " + id +
+                        "\nNome: " + nome +
+                        "\nUnidade: " + unidade +
+                        "\nEstoque: " + estoque;
+        )
     }
 }
