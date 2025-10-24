@@ -221,9 +221,30 @@ public class Main {
         requisicaoDAO.salvar(requisicao, estoqueMaterial);
     }
 
-    public static void atenderRequisicao() {
+    public static void atenderRequisicao(Scanner sc, RequisicaoDAO requisicaoDAO) {
 
-        MenuHelper.atendeRequisicao();
+        MenuHelper.menuAtendeRequisicao();
 
+        // Listagem de Requisições Pendentes
+        List<Requisicao> requisicoes = requisicaoDAO.listarRequisicao(StatusRequisicao.PENDENTE);
+        PrintHelper.listarRequisicao(requisicoes);
+
+        // Seleção de Requisição
+        int requisicaoId = InputHelper.lerInt(sc, "Digite o id da requisição");
+        Optional<Requisicao> requisicao = requisicaoDAO.buscarRequisicaoPorId(requisicaoId);
+
+        Requisicao requisicaoEscolhida;
+
+        if (requisicao.isPresent()) {
+
+            requisicaoEscolhida = requisicao.get();
+        } else {
+
+            MessageHelper.erro("Requisição com ID: " + requisicaoId + ", não encontrado. Tente novamente.");
+            return;
+        }
+
+        // Atender Requisição
+        requisicaoDAO.atenderRequisicao(requisicaoEscolhida);
     }
 }

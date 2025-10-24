@@ -7,10 +7,9 @@ import pablo.tzeliks.model.enums.StatusRequisicao;
 import pablo.tzeliks.view.helper.MessageHelper;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class RequisicaoDAO {
 
@@ -69,7 +68,7 @@ public class RequisicaoDAO {
         }
     }
 
-    public List<Requisicao> listarRequisicao() {
+    public List<Requisicao> listarRequisicao(StatusRequisicao status) {
 
         List<Requisicao> requisicoes = new ArrayList<>();
 
@@ -80,16 +79,16 @@ public class RequisicaoDAO {
         try (Connection conn = Conexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, StatusRequisicao.PENDENTE.name());
+            stmt.setString(1, status.name());
 
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
 
                 LocalDate dataSolicitacao = LocalDate.parse(rs.getString("dataSolicitacao"));
-                StatusRequisicao status = StatusRequisicao.valueOf(rs.getString("status"));
+                StatusRequisicao statusRequisicao = StatusRequisicao.valueOf(rs.getString("status"));
 
-                Requisicao novaRequisicao = new Requisicao(rs.getInt("id"), rs.getString("setor"), dataSolicitacao,  status);
+                Requisicao novaRequisicao = new Requisicao(rs.getInt("id"), rs.getString("setor"), dataSolicitacao,  statusRequisicao);
 
                 requisicoes.add(novaRequisicao);
             }
@@ -100,5 +99,83 @@ public class RequisicaoDAO {
         }
 
         return requisicoes;
+    }
+
+    public Optional<Requisicao> buscarRequisicaoPorId(int id) {
+
+        String sql = """
+                SELECT id, setor, dataSolicitacao, status FROM Requisicao WHERE id = ?;
+                """;
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if  (rs.next()) {
+
+                LocalDate dataSolicitacao = LocalDate.parse(rs.getString("dataSolicitacao"));
+                StatusRequisicao statusRequisicao = StatusRequisicao.valueOf(rs.getString("status"));
+
+                return Optional.of(new Requisicao(rs.getInt("id"), rs.getString("setor"), dataSolicitacao, statusRequisicao));
+            }
+
+        } catch (SQLException e) {
+
+            MessageHelper.erro("Erro ao buscar Requisição por ID, observe: " + e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    public void atenderRequisicao(Requisicao requisicao) {
+
+        Map<Integer, Double> quantidadeMaterial = new HashMap<Integer, Double>();
+
+        String sqlBuscaItensRequisicao = """
+                SELECT idRequisicao, idMaterial, quantidade FROM RequisicaoItem WHERE idRequisicao = ?;
+                """;
+
+        String sqlUpdateItensRequisicao = """
+                UPDATE Material SET estoque = estoque - ? WHERE id = ? AND estoque >= ?;
+                """;
+
+        try (Connection conn = Conexao.getConexao()) {
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlBuscaItensRequisicao)) {
+
+                stmt.setInt(1, requisicao.getId());
+
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+
+                    quantidadeMaterial.put(rs.getInt("idMaterial"), rs.getDouble("quantidade"));
+                }
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUpdateItensRequisicao)) {
+
+                for (Integer chave : quantidadeMaterial.keySet()) {
+
+                    stmt.setDouble(1, quantidadeMaterial.get(chave));
+                    stmt.setInt(2, chave);
+                    stmt.setDouble(3, quantidadeMaterial.get(chave));
+
+                    int linhasAfetadas = stmt.executeUpdate();
+
+                    if (linhasAfetadas == 0) {
+
+                        throw new SQLException("Erro ao mudar as quantidades dos Materiais, nenhum material encontrado.");
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+
+            MessageHelper.erro("Erro ao Executar uma Requisição, observe: " + e.getMessage());
+        }
     }
 }

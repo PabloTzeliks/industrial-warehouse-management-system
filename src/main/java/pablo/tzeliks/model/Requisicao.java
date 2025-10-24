@@ -56,4 +56,12 @@ public class Requisicao {
     public void setStatus(StatusRequisicao status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                "Setor: " + setor +
+                "Data Solicitação: " + dataSolicitacao +
+                "Status: " + status;
+    }
 }
